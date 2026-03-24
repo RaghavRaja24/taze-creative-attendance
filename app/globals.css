@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Avenir Next", "Segoe UI", sans-serif;
+  --background: 38 40% 97%;
+  --foreground: 223 36% 14%;
+  --card: 0 0% 100%;
+  --card-foreground: 223 36% 14%;
+  --primary: 19 73% 49%;
+  --primary-foreground: 36 100% 98%;
+  --secondary: 35 58% 92%;
+  --secondary-foreground: 223 36% 14%;
+  --muted: 34 33% 94%;
+  --muted-foreground: 222 16% 40%;
+  --accent: 168 47% 89%;
+  --accent-foreground: 182 68% 19%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 30 24% 86%;
+  --input: 30 24% 86%;
+  --ring: 19 73% 49%;
+}
+
+.dark {
+  --background: 218 35% 11%;
+  --foreground: 210 20% 96%;
+  --card: 220 30% 15%;
+  --card-foreground: 210 20% 96%;
+  --primary: 24 95% 62%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 220 22% 20%;
+  --secondary-foreground: 210 20% 96%;
+  --muted: 220 22% 18%;
+  --muted-foreground: 214 13% 73%;
+  --accent: 172 40% 20%;
+  --accent-foreground: 168 81% 83%;
+  --destructive: 0 63% 45%;
+  --destructive-foreground: 210 20% 96%;
+  --border: 221 20% 24%;
+  --input: 221 20% 24%;
+  --ring: 24 95% 62%;
+}
+
+* {
+  @apply border-border;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  background-image:
+    radial-gradient(circle at top left, rgba(248, 113, 57, 0.12), transparent 25%),
+    radial-gradient(circle at right top, rgba(14, 165, 233, 0.1), transparent 20%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.65), rgba(255, 248, 242, 0.92));
+}
+
+.dark body {
+  background-image:
+    radial-gradient(circle at top left, rgba(249, 115, 22, 0.16), transparent 25%),
+    radial-gradient(circle at right top, rgba(13, 148, 136, 0.16), transparent 20%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(10, 15, 29, 1));
+}
