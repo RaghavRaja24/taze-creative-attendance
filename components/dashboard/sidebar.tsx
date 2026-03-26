@@ -8,6 +8,7 @@ import {
   CalendarDays,
   ClipboardCheck,
   LayoutGrid,
+  ReceiptIndianRupee,
   MonitorSmartphone,
   ShieldCheck,
   SunMedium,
@@ -30,6 +31,7 @@ const nav = {
     { href: "/admin/terminal", label: "Terminal", icon: MonitorSmartphone },
     { href: "/admin/leave", label: "Leave Queue", icon: ClipboardCheck },
     { href: "/admin/balances", label: "Balances", icon: BadgeCheck },
+    { href: "/admin/payslips", label: "Payslips", icon: ReceiptIndianRupee },
     { href: "/admin/holidays", label: "Holidays", icon: SunMedium },
   ],
   EMPLOYEE: [

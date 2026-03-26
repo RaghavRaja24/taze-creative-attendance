@@ -8,9 +8,9 @@ import { KioskToggle } from "@/components/dashboard/kiosk-toggle";
 import { adminCheckInEmployeeAction, adminCheckOutEmployeeAction } from "@/lib/actions";
 import { requireAdmin } from "@/lib/auth";
 import { getAdminDashboardData } from "@/lib/dashboard-data";
-import { getDayKey, todayKey } from "@/lib/time";
+import { EXPECTED_WORK_HOURS, SHIFT_END_LABEL, SHIFT_START_LABEL, WORKING_DAYS_LABEL, getDayKey, todayKey } from "@/lib/time";
 import { formatDateTime } from "@/lib/utils";
-import { CheckInHours } from "@/components/dashboard/checkin-hours";
+import { CheckInHours, HoursTargetIndicator } from "@/components/dashboard/checkin-hours";
 
 export default async function AdminTerminalPage() {
   await requireAdmin();
@@ -41,12 +41,13 @@ export default async function AdminTerminalPage() {
           <h3 className="mt-2 text-4xl font-semibold">Check employees in or log them off from one screen</h3>
           <p className="mt-4 text-sm leading-6 text-white/80">
             This page is built for fast attendance operations when an admin needs to help the team clock in, clock out,
-            or confirm who is still active today.
+            or confirm who is still active today. Taze Creative runs on a {WORKING_DAYS_LABEL} schedule with a usual{" "}
+            {SHIFT_START_LABEL} to {SHIFT_END_LABEL} shift and a {EXPECTED_WORK_HOURS}-hour target.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Badge className="bg-white/15 text-white">Fast check-in</Badge>
-            <Badge className="bg-white/15 text-white">Live hours</Badge>
-            <Badge className="bg-white/15 text-white">Admin only</Badge>
+            <Badge className="bg-white/15 text-white">{WORKING_DAYS_LABEL}</Badge>
+            <Badge className="bg-white/15 text-white">{SHIFT_START_LABEL} - {SHIFT_END_LABEL}</Badge>
+            <Badge className="bg-white/15 text-white">{EXPECTED_WORK_HOURS}h target</Badge>
           </div>
         </Card>
 
@@ -98,6 +99,9 @@ export default async function AdminTerminalPage() {
           <div>
             <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Today’s Team Status</p>
             <h3 className="mt-1 text-2xl font-semibold">Who is in, who is out, and hours logged</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Default schedule: {WORKING_DAYS_LABEL}, {SHIFT_START_LABEL} - {SHIFT_END_LABEL}, {EXPECTED_WORK_HOURS} hours.
+            </p>
           </div>
           <Badge tone="info">{employeeRows.length} employees</Badge>
         </div>
@@ -130,8 +134,16 @@ export default async function AdminTerminalPage() {
                       checkOutAt={todayRecord?.checkOutAt?.toISOString() ?? null}
                     />
                   </span>
+                  {" "}of {EXPECTED_WORK_HOURS}h target
                 </p>
               </div>
+
+              <HoursTargetIndicator
+                className="mt-4"
+                checkInAt={todayRecord?.checkInAt?.toISOString() ?? null}
+                checkOutAt={todayRecord?.checkOutAt?.toISOString() ?? null}
+                targetHours={EXPECTED_WORK_HOURS}
+              />
 
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 <ActionForm action={adminCheckInEmployeeAction}>

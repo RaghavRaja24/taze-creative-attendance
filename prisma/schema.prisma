@@ -40,6 +40,8 @@ model User {
   leaveRequests     LeaveRequest[]    @relation("LeaveRequester")
   reviewedLeaves    LeaveRequest[]    @relation("LeaveReviewer")
   archivedLeaves    LeaveRequest[]    @relation("LeaveArchiver")
+  payslips          Payslip[]         @relation("PayslipEmployee")
+  generatedPayslips Payslip[]         @relation("PayslipGenerator")
 }
 
 model AttendanceRecord {
@@ -95,6 +97,41 @@ model Holiday {
 
   @@unique([date])
   @@index([financialYear, date])
+}
+
+model Payslip {
+  id                   String              @id @default(cuid())
+  userId               String
+  user                 User                @relation("PayslipEmployee", fields: [userId], references: [id], onDelete: Cascade)
+  generatedById        String?
+  generatedBy          User?               @relation("PayslipGenerator", fields: [generatedById], references: [id], onDelete: SetNull)
+  monthStart           DateTime            @db.Date
+  monthLabel           String
+  baseSalary           Float
+  scheduledWorkingDays Int
+  payableDays          Int
+  grossEarnings        Float
+  totalDeductions      Float               @default(0)
+  netPay               Float
+  notes                String?
+  deductions           PayslipDeduction[]
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  @@unique([userId, monthStart])
+  @@index([monthStart])
+}
+
+model PayslipDeduction {
+  id        String   @id @default(cuid())
+  payslipId String
+  payslip   Payslip  @relation(fields: [payslipId], references: [id], onDelete: Cascade)
+  label     String
+  amount    Float
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([payslipId])
 }
 
 model Account {

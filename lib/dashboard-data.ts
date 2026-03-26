@@ -63,3 +63,35 @@ export async function getEmployeeDashboardData(userId: string) {
     currentFinancialYear: getFinancialYearLabel(new Date()),
   };
 }
+
+export async function getAdminPayslipData() {
+  const [users, holidays, payslips] = await Promise.all([
+    prisma.user.findMany({
+      where: { isActive: true },
+      orderBy: { name: "asc" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+      },
+    }),
+    prisma.holiday.findMany({
+      orderBy: { date: "asc" },
+    }),
+    prisma.payslip.findMany({
+      include: {
+        user: true,
+        generatedBy: true,
+        deductions: true,
+      },
+      orderBy: [{ monthStart: "desc" }, { createdAt: "desc" }],
+    }),
+  ]);
+
+  return {
+    users,
+    holidays,
+    payslips,
+  };
+}

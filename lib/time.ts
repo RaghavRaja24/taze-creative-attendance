@@ -3,12 +3,15 @@ import {
   endOfMonth,
   endOfWeek,
   format,
-  isWeekend,
   startOfMonth,
   startOfWeek,
 } from "date-fns";
 
 const TIMEZONE = process.env.APP_TIMEZONE ?? "Asia/Kolkata";
+export const EXPECTED_WORK_HOURS = 9;
+export const SHIFT_START_LABEL = "12:00 PM";
+export const SHIFT_END_LABEL = "9:00 PM";
+export const WORKING_DAYS_LABEL = "Monday to Saturday";
 
 export function getDayKey(date: Date) {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -34,7 +37,13 @@ export function todayKey() {
 }
 
 export function isWorkingDay(date: Date) {
-  return !isWeekend(date);
+  const local = new Date(
+    date.toLocaleString("en-US", {
+      timeZone: TIMEZONE,
+    }),
+  );
+
+  return local.getDay() !== 0;
 }
 
 export function getFinancialYearLabel(date: Date) {
@@ -52,7 +61,7 @@ export function isSameFinancialYear(start: Date, end: Date) {
 }
 
 export function getLateThreshold() {
-  const raw = process.env.LATE_MARK_AFTER ?? "09:45";
+  const raw = process.env.LATE_MARK_AFTER ?? "12:00";
   const [hours, minutes] = raw.split(":").map(Number);
   return { hours, minutes };
 }

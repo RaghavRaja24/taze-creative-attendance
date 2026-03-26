@@ -7,6 +7,11 @@ import "@/app/globals.css";
 export const metadata: Metadata = {
   title: "Taze Creative Attendance Dashboard",
   description: "Attendance and leave management dashboard for Taze Creative.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

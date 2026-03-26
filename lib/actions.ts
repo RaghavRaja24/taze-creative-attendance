@@ -13,6 +13,16 @@ import {
   isOverlappingLeave,
 } from "@/lib/attendance";
 import { sendLeaveApplicationEmail } from "@/lib/mailer";
+import {
+  calculateGrossFromAttendance,
+  countPayableDays,
+  countScheduledWorkingDays,
+  getPayslipMonthLabel,
+  parseDeductionsInput,
+  parsePayslipMonth,
+  roundCurrency,
+  sumDeductionAmounts,
+} from "@/lib/payslips";
 import { prisma } from "@/lib/prisma";
 import { dayKeyToDate, getFinancialYearLabel, isLateCheckIn, isSameFinancialYear, isWorkingDay, todayKey } from "@/lib/time";
 import { formatDate } from "@/lib/utils";
@@ -547,6 +557,108 @@ export async function assignLeaveByAdminAction(_: ActionState, formData: FormDat
   revalidatePath("/admin");
   revalidatePath("/employee");
   return { status: "success", message: "Leave assigned successfully." };
+}
+
+export async function generatePayslipAction(_: ActionState, formData: FormData): Promise<ActionState> {
+  const session = await requireAdmin();
+  const userId = formData.get("userId")?.toString();
+  const month = formData.get("month")?.toString();
+  const baseSalaryRaw = formData.get("baseSalary")?.toString();
+  const deductionsInput = formData.get("deductions")?.toString().trim() ?? "";
+  const notes = formData.get("notes")?.toString().trim() || null;
+
+  if (!userId || !month || !baseSalaryRaw) {
+    return { status: "error", message: "Employee, month, and base salary are required." };
+  }
+
+  const monthStart = parsePayslipMonth(month);
+  if (!monthStart) {
+    return { status: "error", message: "Please choose a valid payslip month." };
+  }
+
+  const baseSalary = Number(baseSalaryRaw);
+  if (!Number.isFinite(baseSalary) || baseSalary <= 0) {
+    return { status: "error", message: "Base salary must be a valid positive amount." };
+  }
+
+  let deductions;
+  try {
+    deductions = parseDeductionsInput(deductionsInput);
+  } catch (error) {
+    return { status: "error", message: error instanceof Error ? error.message : "Invalid deductions input." };
+  }
+
+  const [user, holidays] = await Promise.all([
+    prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      include: {
+        attendanceRecords: true,
+      },
+    }),
+    prisma.holiday.findMany(),
+  ]);
+
+  const scheduledWorkingDays = countScheduledWorkingDays(monthStart, holidays);
+  const payableDays = countPayableDays(monthStart, user.attendanceRecords, holidays);
+  const grossEarnings = calculateGrossFromAttendance(baseSalary, scheduledWorkingDays, payableDays);
+  const totalDeductions = sumDeductionAmounts(deductions);
+  const netPay = roundCurrency(Math.max(0, grossEarnings - totalDeductions));
+
+  await prisma.payslip.upsert({
+    where: {
+      userId_monthStart: {
+        userId,
+        monthStart,
+      },
+    },
+    update: {
+      generatedById: session.user.id,
+      monthLabel: getPayslipMonthLabel(monthStart),
+      baseSalary: roundCurrency(baseSalary),
+      scheduledWorkingDays,
+      payableDays,
+      grossEarnings,
+      totalDeductions,
+      netPay,
+      notes,
+      deductions: {
+        deleteMany: {},
+        create: deductions.map((deduction) => ({
+          label: deduction.label,
+          amount: deduction.amount,
+          note: deduction.note,
+        })),
+      },
+    },
+    create: {
+      userId,
+      generatedById: session.user.id,
+      monthStart,
+      monthLabel: getPayslipMonthLabel(monthStart),
+      baseSalary: roundCurrency(baseSalary),
+      scheduledWorkingDays,
+      payableDays,
+      grossEarnings,
+      totalDeductions,
+      netPay,
+      notes,
+      deductions: {
+        create: deductions.map((deduction) => ({
+          label: deduction.label,
+          amount: deduction.amount,
+          note: deduction.note,
+        })),
+      },
+    },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/payslips");
+
+  return {
+    status: "success",
+    message: `Payslip generated for ${user.name} for ${getPayslipMonthLabel(monthStart)}.`,
+  };
 }
 
 export async function resetLeaveBalanceAction(_: ActionState, formData: FormData): Promise<ActionState> {

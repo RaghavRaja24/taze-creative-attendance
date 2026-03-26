@@ -13,7 +13,7 @@ const employees = [
 ];
 
 const makeDate = (value: string) => new Date(`${value}T00:00:00.000Z`);
-const makeDateTime = (value: string) => new Date(`${value}Z`);
+const makeDateTime = (value: string) => new Date(`${value}+05:30`);
 
 async function main() {
   await prisma.holiday.deleteMany();
@@ -39,19 +39,19 @@ async function main() {
   const [admin, secondAdmin, neha, arjun, simran, kabir, ira] = createdUsers;
 
   const records = [
-    { userId: admin.id, date: "2026-03-18", checkInAt: "2026-03-18T09:08:00.000", checkOutAt: "2026-03-18T18:21:00.000", late: false },
-    { userId: secondAdmin.id, date: "2026-03-18", checkInAt: "2026-03-18T09:12:00.000", checkOutAt: "2026-03-18T18:10:00.000", late: false },
-    { userId: neha.id, date: "2026-03-18", checkInAt: "2026-03-18T09:51:00.000", checkOutAt: "2026-03-18T18:42:00.000", late: true },
-    { userId: arjun.id, date: "2026-03-18", checkInAt: "2026-03-18T09:30:00.000", checkOutAt: "2026-03-18T18:02:00.000", late: false },
-    { userId: simran.id, date: "2026-03-18", checkInAt: "2026-03-18T09:17:00.000", checkOutAt: "2026-03-18T18:27:00.000", late: false },
-    { userId: kabir.id, date: "2026-03-18", checkInAt: "2026-03-18T10:08:00.000", checkOutAt: "2026-03-18T18:55:00.000", late: true },
-    { userId: ira.id, date: "2026-03-18", checkInAt: "2026-03-18T09:24:00.000", checkOutAt: "2026-03-18T18:19:00.000", late: false },
-    { userId: admin.id, date: "2026-03-19", checkInAt: "2026-03-19T09:06:00.000", checkOutAt: "2026-03-19T18:11:00.000", late: false },
-    { userId: secondAdmin.id, date: "2026-03-19", checkInAt: "2026-03-19T09:18:00.000", checkOutAt: "2026-03-19T18:08:00.000", late: false },
-    { userId: neha.id, date: "2026-03-19", checkInAt: "2026-03-19T09:42:00.000", checkOutAt: "2026-03-19T18:22:00.000", late: false },
-    { userId: arjun.id, date: "2026-03-19", checkInAt: "2026-03-19T09:11:00.000", checkOutAt: "2026-03-19T17:59:00.000", late: false },
-    { userId: kabir.id, date: "2026-03-19", checkInAt: "2026-03-19T09:58:00.000", checkOutAt: "2026-03-19T18:17:00.000", late: true },
-    { userId: ira.id, date: "2026-03-19", checkInAt: "2026-03-19T09:21:00.000", checkOutAt: "2026-03-19T18:06:00.000", late: false },
+    { userId: admin.id, date: "2026-03-18", checkInAt: "2026-03-18T12:03:00.000", checkOutAt: "2026-03-18T21:05:00.000", late: true },
+    { userId: secondAdmin.id, date: "2026-03-18", checkInAt: "2026-03-18T11:58:00.000", checkOutAt: "2026-03-18T21:02:00.000", late: false },
+    { userId: neha.id, date: "2026-03-18", checkInAt: "2026-03-18T12:11:00.000", checkOutAt: "2026-03-18T21:09:00.000", late: true },
+    { userId: arjun.id, date: "2026-03-18", checkInAt: "2026-03-18T12:00:00.000", checkOutAt: "2026-03-18T20:47:00.000", late: false },
+    { userId: simran.id, date: "2026-03-18", checkInAt: "2026-03-18T11:55:00.000", checkOutAt: "2026-03-18T20:58:00.000", late: false },
+    { userId: kabir.id, date: "2026-03-18", checkInAt: "2026-03-18T12:22:00.000", checkOutAt: "2026-03-18T21:14:00.000", late: true },
+    { userId: ira.id, date: "2026-03-18", checkInAt: "2026-03-18T12:04:00.000", checkOutAt: "2026-03-18T20:52:00.000", late: true },
+    { userId: admin.id, date: "2026-03-19", checkInAt: "2026-03-19T11:59:00.000", checkOutAt: "2026-03-19T21:03:00.000", late: false },
+    { userId: secondAdmin.id, date: "2026-03-19", checkInAt: "2026-03-19T12:06:00.000", checkOutAt: "2026-03-19T20:56:00.000", late: true },
+    { userId: neha.id, date: "2026-03-19", checkInAt: "2026-03-19T12:02:00.000", checkOutAt: "2026-03-19T21:01:00.000", late: true },
+    { userId: arjun.id, date: "2026-03-19", checkInAt: "2026-03-19T11:57:00.000", checkOutAt: "2026-03-19T20:48:00.000", late: false },
+    { userId: kabir.id, date: "2026-03-19", checkInAt: "2026-03-19T12:16:00.000", checkOutAt: "2026-03-19T21:10:00.000", late: true },
+    { userId: ira.id, date: "2026-03-19", checkInAt: "2026-03-19T12:00:00.000", checkOutAt: "2026-03-19T20:49:00.000", late: false },
   ];
 
   for (const record of records) {

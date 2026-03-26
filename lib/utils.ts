@@ -29,3 +29,11 @@ export function formatTime(date: Date) {
     timeZone: process.env.APP_TIMEZONE ?? "Asia/Kolkata",
   }).format(date);
 }
+
+export function formatCurrency(amount: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 2,
+  }).format(amount);
+}

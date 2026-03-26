@@ -13,6 +13,7 @@ import { requestLeaveAction } from "@/lib/actions";
 import { getDashboardMetrics, getFinancialYearLeaveBalances } from "@/lib/attendance";
 import { requireUser } from "@/lib/auth";
 import { getEmployeeDashboardData } from "@/lib/dashboard-data";
+import { EXPECTED_WORK_HOURS, SHIFT_END_LABEL, SHIFT_START_LABEL, WORKING_DAYS_LABEL } from "@/lib/time";
 import { LeaveType } from "@prisma/client";
 
 export default async function EmployeeOverviewPage() {
@@ -44,6 +45,10 @@ export default async function EmployeeOverviewPage() {
         <Card className="rounded-[2rem] p-6">
           <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Employee Workspace</p>
           <h3 className="mt-1 text-3xl font-semibold">Use focused pages for check-in, history, and calendar</h3>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Work schedule: {WORKING_DAYS_LABEL}, {SHIFT_START_LABEL} - {SHIFT_END_LABEL}, with {EXPECTED_WORK_HOURS} hours
+            expected each day.
+          </p>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <Link href="/employee/check-in" className="rounded-[1.5rem] border bg-background/70 p-5 transition hover:bg-secondary/60">
               <p className="font-semibold">Check-In Page</p>

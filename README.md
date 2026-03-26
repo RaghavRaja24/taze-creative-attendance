@@ -8,6 +8,7 @@ Production-ready attendance and leave management dashboard for a small team of a
 - Pre-approved email allowlist using the `User` table
 - Role-based routing for admins and employees
 - Daily attendance with check-in and check-out timestamps
+- Monday to Saturday workweek with a default 12 PM to 9 PM shift and 9-hour target
 - Late mark logic using configurable threshold
 - Auto-absent treatment for past working days without check-in or approved leave
 - Leave management with overlap prevention and approval workflow
@@ -59,7 +60,7 @@ NEXTAUTH_SECRET="replace-with-a-long-random-secret"
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
 APP_TIMEZONE="Asia/Kolkata"
-LATE_MARK_AFTER="09:45"
+LATE_MARK_AFTER="12:00"
 ```
 
 ## Google OAuth Setup

@@ -1,4 +1,4 @@
-import { CheckInHours } from "@/components/dashboard/checkin-hours";
+import { CheckInHours, HoursTargetIndicator } from "@/components/dashboard/checkin-hours";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { ActionForm } from "@/components/forms/action-form";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { checkInAction, checkOutAction } from "@/lib/actions";
 import { requireUser } from "@/lib/auth";
 import { getEmployeeDashboardData } from "@/lib/dashboard-data";
-import { getDayKey, todayKey } from "@/lib/time";
+import { EXPECTED_WORK_HOURS, SHIFT_END_LABEL, SHIFT_START_LABEL, WORKING_DAYS_LABEL, getDayKey, todayKey } from "@/lib/time";
 import { formatDateTime } from "@/lib/utils";
 
 export default async function EmployeeCheckInPage() {
@@ -20,17 +20,17 @@ export default async function EmployeeCheckInPage() {
     <div className="space-y-6">
       <section className="grid gap-4 md:grid-cols-3">
         <StatCard
-          hint={todayRecord?.checkInAt ? formatDateTime(todayRecord.checkInAt) : "No check-in yet"}
+          hint={todayRecord?.checkInAt ? formatDateTime(todayRecord.checkInAt) : `Shift opens at ${SHIFT_START_LABEL}`}
           label="Check-In"
           value={todayRecord?.checkInAt ? "Done" : "Open"}
         />
         <StatCard
-          hint={todayRecord?.checkOutAt ? formatDateTime(todayRecord.checkOutAt) : "Still working or not logged off"}
+          hint={todayRecord?.checkOutAt ? formatDateTime(todayRecord.checkOutAt) : `Shift ends at ${SHIFT_END_LABEL}`}
           label="Check-Out"
           value={todayRecord?.checkOutAt ? "Done" : "Pending"}
         />
         <StatCard
-          hint="Live duration for today"
+          hint={`Target ${EXPECTED_WORK_HOURS}h for ${WORKING_DAYS_LABEL}`}
           label="Hours Logged"
           value={<CheckInHours checkInAt={todayRecord?.checkInAt?.toISOString() ?? null} checkOutAt={todayRecord?.checkOutAt?.toISOString() ?? null} />}
         />
@@ -43,12 +43,13 @@ export default async function EmployeeCheckInPage() {
           <h3 className="mt-2 text-4xl font-semibold">Punch in and log off without digging through the dashboard</h3>
           <p className="mt-4 max-w-xl text-sm leading-6 text-white/85">
             Use this page as your daily attendance station. The logged-hours card updates from your check-in until you
-            log off.
+            log off. Standard working days are {WORKING_DAYS_LABEL}, with a usual shift of {SHIFT_START_LABEL} to{" "}
+            {SHIFT_END_LABEL} and a {EXPECTED_WORK_HOURS}-hour target.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Badge className="bg-white/20 text-white">Fast access</Badge>
-            <Badge className="bg-white/20 text-white">Hours tracked</Badge>
-            <Badge className="bg-white/20 text-white">No extra clicks</Badge>
+            <Badge className="bg-white/20 text-white">{WORKING_DAYS_LABEL}</Badge>
+            <Badge className="bg-white/20 text-white">{SHIFT_START_LABEL} - {SHIFT_END_LABEL}</Badge>
+            <Badge className="bg-white/20 text-white">{EXPECTED_WORK_HOURS}h target</Badge>
           </div>
         </Card>
 
@@ -59,7 +60,7 @@ export default async function EmployeeCheckInPage() {
                 <div>
                   <p className="font-semibold">Start day</p>
                   <p className="text-sm text-muted-foreground">
-                    {todayRecord?.checkInAt ? `Checked in at ${formatDateTime(todayRecord.checkInAt)}` : "Ready to clock in"}
+                    {todayRecord?.checkInAt ? `Checked in at ${formatDateTime(todayRecord.checkInAt)}` : `Ready to clock in for the ${SHIFT_START_LABEL} shift`}
                   </p>
                 </div>
                 <SubmitButton className="w-full" disabled={Boolean(todayRecord?.checkInAt)} pendingLabel="Checking in...">
@@ -73,7 +74,7 @@ export default async function EmployeeCheckInPage() {
                 <div>
                   <p className="font-semibold">End day</p>
                   <p className="text-sm text-muted-foreground">
-                    {todayRecord?.checkOutAt ? `Checked out at ${formatDateTime(todayRecord.checkOutAt)}` : "Log off when your workday is done"}
+                    {todayRecord?.checkOutAt ? `Checked out at ${formatDateTime(todayRecord.checkOutAt)}` : `Log off when the ${SHIFT_END_LABEL} shift is done`}
                   </p>
                 </div>
                 <SubmitButton
@@ -100,11 +101,21 @@ export default async function EmployeeCheckInPage() {
               </Badge>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
+              Schedule: <span className="font-medium text-foreground">{WORKING_DAYS_LABEL}, {SHIFT_START_LABEL} - {SHIFT_END_LABEL}</span>
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
               Logged hours:{" "}
               <span className="font-medium text-foreground">
                 <CheckInHours checkInAt={todayRecord?.checkInAt?.toISOString() ?? null} checkOutAt={todayRecord?.checkOutAt?.toISOString() ?? null} />
               </span>
+              {" "}of {EXPECTED_WORK_HOURS}h target
             </p>
+            <HoursTargetIndicator
+              className="mt-4"
+              checkInAt={todayRecord?.checkInAt?.toISOString() ?? null}
+              checkOutAt={todayRecord?.checkOutAt?.toISOString() ?? null}
+              targetHours={EXPECTED_WORK_HOURS}
+            />
           </div>
         </Card>
       </section>
